@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_card"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+
+        <Button
+            android:id="@+id/purchase"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/grey_transparent"
+            android:drawableTop="@drawable/ic_payment_white_64dp"
+            android:elevation="5dp"
+            android:paddingTop="20dp"
+            android:text="@string/card_payment"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/balance"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/balance"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="32dp"
+            android:background="@color/grey_transparent"
+            android:drawableTop="@drawable/ic_account_balance_wallet_white_64dp"
+            android:elevation="5dp"
+            android:paddingTop="20dp"
+            android:text="@string/check_balance"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/history"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/grey_transparent"
+            android:clickable="true"
+            android:drawableTop="@drawable/ic_history_white_64dp"
+            android:elevation="5dp"
+            android:focusable="true"
+            android:paddingTop="20dp"
+            android:text="@string/history"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toStartOf="@+id/setup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/purchase" />
+
+        <Button
+            android:id="@+id/setup"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            android:background="@color/grey_transparent"
+            android:clickable="true"
+            android:drawableTop="@drawable/ic_phonelink_setup_white_64dp"
+            android:elevation="5dp"
+            android:focusable="true"
+            android:paddingTop="20dp"
+            android:text="@string/user_settings"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/balance" />
+
+    <TextView
+        android:id="@+id/bizNameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:shadowColor="@android:color/holo_orange_dark"
+        android:text="@string/business_name"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>

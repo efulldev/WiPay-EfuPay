@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".SetupActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/setupToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_orange_dark"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitle="@string/settings_subtitle"
+        app:title="@string/action_settings" />
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:onClick="changePinDialog"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/setupToolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/user_settings"
+                android:textAlignment="viewStart"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/chgMerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_business_center_blue_grey_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="editBusinessName"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/business_name"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/chngBizMailBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_contact_mail_bue_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="editBusinessEmail"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/biz_email"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/pinManag"
+                android:textAlignment="viewStart"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/words2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_fiber_pin_blue_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="changePinDialog"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/changeOpPin"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/words3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_supervisor_account_cyan_24dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="changeSupPinDialog"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/changeSupPIN"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/words"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_person_pin_pink_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="changeAdminPinDialog"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/changeAdminPin"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/textView11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/actions"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/eod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_end_of_day_pink_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/EOD"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="?android:attr/listDivider" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/system"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/cloudLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_cloud_yellow_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="showInputDialog"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/cloud"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/ota"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_cloud_download_purple_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/check_updates"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <include
+                android:id="@+id/epmsConfigInc"
+                layout="@layout/terminal_setup_options_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

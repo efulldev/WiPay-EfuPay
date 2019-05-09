@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hostIp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/holo_green_dark" />
+
+    <EditText
+        android:id="@+id/hostIpTextField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="none|text"
+        android:padding="10dp"
+        android:textColor="@color/note_list_text"
+        android:textColorLink="@android:color/holo_orange_dark" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/hostPort"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/holo_green_dark" />
+
+    <EditText
+        android:id="@+id/hostPortTextField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="@color/note_list_text"
+        android:textColorLink="@android:color/holo_orange_dark" />
+
+    <TextView
+        android:id="@+id/textView20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/proc"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/holo_green_dark" />
+
+    <EditText
+        android:id="@+id/protocolTextField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="@color/note_list_text"
+        android:textColorLink="@android:color/holo_orange_dark" />
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/callHome"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/holo_green_dark" />
+
+    <EditText
+        android:id="@+id/callHomeTimerTextField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textColor="@color/note_list_text"
+        android:textColorLink="@android:color/holo_orange_dark" />
+
+</LinearLayout>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/terminalConfigList"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/epms_config"
+        android:textAlignment="viewStart"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/terminalIdBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_terminal_purple_32dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/terminal_id"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/hostConfigBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_settings_input_antenna_blue_24dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/host_config"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/keyConfigBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_vpn_key_lemon_24dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/key_config"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/changeRecLogo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_filter_hdr_blue_32dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/rec_logo_chg"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/syncTermBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_sync_blue_32dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/sync"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+
+    <Button
+        android:id="@+id/admin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:drawableStart="@drawable/ic_developer_mode_pink_24dp"
+        android:drawablePadding="10dp"
+        android:focusable="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/AdminConfig"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="@color/cardview_dark_background" />
+</LinearLayout>

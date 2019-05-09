@@ -1,0 +1,164 @@
+<resources>
+    <string name="app_name">WiPay EfuPay</string>
+    <string name="action_settings">Settings</string>
+    <string name="pay_with_atm">Pay Using ATM</string>
+    <string name="confirm">Proceed and Pay</string>
+    <string name="pay_with_fuel_card">Pay Using Fuel Card</string>
+    <string name="config">Configuration</string>
+    <string name="transact_intro">
+        You are about to be debited the above stated amount
+        from your bank account.</string>
+    <string name="proceed_confirm">Do you wish to proceed with this transaction?</string>
+    <string name="terminal_subtitle">Complete Payment using WiPay EfuPay</string>
+    <string name="terminal_instruction_1">The Payment Terminal is a module which is required by the device for processing payments made using Smart Card.</string>
+    <string name="instruction_header">Introduction</string>
+    <string name="terminal_instruction_2">This module MUST NOT be uninstalled by the user as it is required by the device to process payments using Credit and Debit cards.</string>
+    <!--strings to hold names of variables used in sharedPreferences-->
+    <string name="batch_no">ng.byteworks.org.landi.batch_no</string>
+    <string name="seq_no">ng.byteworks.org.landi.seq_no</string>
+    <string name="temp_seq_no">ng.byteworks.org.landi.temp_seq_no</string>
+
+    <string name="EOD">End Of Day</string>
+    <string name="balance">Balance</string>
+    <string name="rev">Reversal</string>
+    <string name="purchase">Make Payment</string>
+    <string name="title_activity_snackbar">snackbar</string>
+    <string name="refund">Refund</string>
+    <string name="msg_no_notes">No Recent Transaction has been carried out on this terminal</string>
+    <string name="history">Transaction History</string>
+    <string name="title_activity_this_transaction">ThisTransaction</string>
+    <string name="PAN">PAN</string>
+    <string name="dashes">---------------------------------------</string>
+    <string name="name">NAME</string>
+    <string name="rrn">RRN</string>
+    <string name="accType">ACCOUNT TYPE</string>
+    <string name="amountCap">AMOUNT</string>
+    <string name="cardType">CARD TYPE</string>
+    <string name="expiry">EXPIRY</string>
+    <string name="dateTime">DATE/TIME</string>
+    <string name="changePin">Change PIN</string>
+    <string name="print_EOD">Print End Of Day Receipt</string>
+    <string name="viewBackup">Backup Transaction History</string>
+    <string name="backUp">Back Up</string>
+    <string name="History">History</string>
+    <string name="origin_app">SOURCE</string>
+    <string name="card_payment">Card Payment</string>
+    <string name="check_balance">Check Balance</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+    <string name="pref_title_display_name">Display name</string>
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="settings_subtitle">Manage Terminal Preferences</string>
+    <string name="user_settings">User Preferences</string>
+    <string name="actions">Actions</string>
+    <string name="system">System</string>
+    <string name="cloud">Cloud Database URI</string>
+    <string name="check_updates">Check for Software Updates</string>
+    <string name="http">http://</string>
+    <string name="enter_pin">Enter PIN</string>
+    <string name="old_pin">Please enter old PIN</string>
+    <string name="new_pin">Enter your new PIN</string>
+    <string name="confirm_pin">Confirm your new PIN</string>
+    <string name="business_name">Business Name</string>
+    <string name="epms_config">EPMS Configuration</string>
+    <string name="terminal_id">Terminal Identification</string>
+    <string name="host_config">Host Configuration</string>
+    <string name="key_config">Key Configuration</string>
+    <string name="perp_term">Prep Terminal</string>
+    <string name="dnlParams">Download Parameters</string>
+    <string name="dnlKeys">Download New Keys</string>
+    <string name="prntConfig">Print Configuration</string>
+    <string name="AdminConfig">Admin Configuration</string>
+    <string name="termId">Terminal ID</string>
+    <string name="merchantId">Merchant ID</string>
+    <string name="merchantAlias">Merchant Alias</string>
+    <string name="hostIp">Host IP</string>
+    <string name="hostPort">Host Port</string>
+    <string name="proc">Protocol</string>
+    <string name="callHome">Callhome Timer(sec)</string>
+    <string name="key1">Key Componenet 1</string>
+    <string name="key2">Key Component 2</string>
+    <string name="pinManag">PIN Management</string>
+    <string name="changeOpPin">Operator PIN</string>
+    <string name="changeSupPIN">Supervisor PIN</string>
+    <string name="changeAdminPin">Admin PIN</string>
+    <string name="sync">Synchronize</string>
+    <string name="bank_code">Bank Code</string>
+    <string name="ptsp_id">PTSP ID</string>
+    <string name="powered">Powered By Efull Technology Nigeria Limited</string>
+    <string name="biz_email">Business E-mail</string>
+    <string name="rec_logo_chg">Change Receipt Logo</string>
+    <string name="chgLogo">Change Receipt Logo</string>
+    <string name="laod_from_local">Load Image From Internal Storage</string>
+    <string name="load_from_url">Load Image from URL</string>
+    <string name="fetch_with_bank_code">Fetch Image From Efull Terminal Manager</string>
+</resources>

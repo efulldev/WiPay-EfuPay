@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ReceiptLogoActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/recLogoToolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_orange_dark"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/chgLogo" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recLogoToolbar">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="500dp">
+
+            <ImageView
+                android:id="@+id/recImagePreview"
+                android:layout_width="226dp"
+                android:layout_height="147dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_filter_hdr_blue_32dp" />
+
+            <LinearLayout
+                android:layout_width="368dp"
+                android:layout_height="321dp"
+                android:layout_marginTop="80dp"
+                android:layout_marginEnd="4dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.538"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recImagePreview">
+
+                <!--<Button-->
+                    <!--android:id="@+id/loadFromInterBtn"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:background="@color/white"-->
+                    <!--android:clickable="true"-->
+                    <!--android:drawableStart="@drawable/ic_sd_card_purple_32dp"-->
+                    <!--android:drawablePadding="10dp"-->
+                    <!--android:focusable="true"-->
+                    <!--android:onClick="pickLogoFromLocalStorage"-->
+                    <!--android:paddingLeft="10dp"-->
+                    <!--android:paddingRight="10dp"-->
+                    <!--android:text="@string/laod_from_local"-->
+                    <!--android:textAlignment="viewStart"-->
+                    <!--android:textAllCaps="false"-->
+                    <!--android:textColor="@color/cardview_dark_background"-->
+                    <!--android:visibility="visible" />-->
+
+                <Button
+                    android:id="@+id/loadFromTerMan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:clickable="true"
+                    android:drawableStart="@drawable/ic_photo_album_pink_32dp"
+                    android:drawablePadding="10dp"
+                    android:focusable="true"
+                    android:onClick="fetchFromTerminalManager"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/fetch_with_bank_code"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/cardview_dark_background" />
+
+                <Button
+                    android:id="@+id/loadFromUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:clickable="true"
+                    android:drawableStart="@drawable/ic_public_blue_32dp"
+                    android:drawablePadding="10dp"
+                    android:focusable="true"
+                    android:onClick="loadFileFromUrlDialog"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/load_from_url"
+                    android:textAlignment="viewStart"
+                    android:textAllCaps="false"
+                    android:textColor="@color/cardview_dark_background" />
+
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
