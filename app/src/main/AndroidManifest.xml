@@ -20,6 +20,7 @@
         android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" android:protectionLevel="signature"/>
 
     <application
         android:name="com.arke.sdk.LandiApplication"
@@ -95,7 +96,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".TerminalSetup" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
