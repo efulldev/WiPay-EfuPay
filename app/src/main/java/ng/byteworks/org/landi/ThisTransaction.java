@@ -129,11 +129,11 @@ public class ThisTransaction extends AppCompatActivity {
         Transaction _transaction = mDatabase.getEftTransaction(this.refno);
         String headerLogoPath = sharedPref.getString("headerlogo", null);
         if(headerLogoPath != null){
-            try {
-                com.arke.sdk.view.EPMSAdminActivity.reprintReceipt(_transaction, ThisTransaction.this, headerLogoPath);
-            } catch (Exception e) {
-                Log.e("MainActivity", e.getLocalizedMessage());
-            }
+//            try {
+//                com.arke.sdk.view.EPMSAdminActivity.reprintReceipt(_transaction, ThisTransaction.this, headerLogoPath);
+//            } catch (Exception e) {
+//                Log.e("MainActivity", e.getLocalizedMessage());
+//            }
         }else{
             Toast.makeText(ThisTransaction.this, "Please configure receipt logo", Toast.LENGTH_SHORT).show();
         }

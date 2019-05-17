@@ -90,7 +90,7 @@
                 android:textColor="@color/cardview_dark_background" />
 
             <Button
-                android:id="@+id/words2"
+                android:id="@+id/chgOpPinBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -107,7 +107,7 @@
                 android:textColor="@color/cardview_dark_background" />
 
             <Button
-                android:id="@+id/words3"
+                android:id="@+id/chgSupPinBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -124,7 +124,7 @@
                 android:textColor="@color/cardview_dark_background" />
 
             <Button
-                android:id="@+id/words"
+                android:id="@+id/chgAdPinBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -168,6 +168,23 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/EOD"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/eodPrintBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_print_lemon_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="printEodReceiptNow"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/print_EOD"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 android:textColor="@color/cardview_dark_background" />

@@ -42,6 +42,7 @@ public class TransactParser extends AppCompatActivity {
     private String appName = "NOT SET";
 
     private mainDatabase mDatabase;
+    private SqliteDatabase epmsDatabase;
     private redundantDatabase mRedDatabase;
 
     public final static String EXTRA_PURCHASE_ACTION = "makePayment";
@@ -136,6 +137,7 @@ public class TransactParser extends AppCompatActivity {
                 Log.d("TransactParser", "stan = " + newTransaction.getStan());
                 mDatabase.saveEftTransaction(newTransaction);
                 mDatabase.saveTransactionOrigin(newTransaction.getRefno(),""+this.appName);
+                epmsDatabase.saveEftTransaction(newTransaction);
 
                 String headerLogoPath = sharedPref.getString("headerlogo", null);
                 if(headerLogoPath != null){

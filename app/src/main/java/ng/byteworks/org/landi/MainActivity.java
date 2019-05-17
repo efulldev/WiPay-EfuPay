@@ -44,14 +44,15 @@ import java.io.IOException;
 
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
+import com.arke.sdk.util.epms.SqliteDatabase;
 import ng.byteworks.org.landi.BuildConfig;
-
 import static ng.byteworks.org.landi.SetupActivity.encodeUrlEscaped;
 
 public class MainActivity extends AppCompatActivity {
 
     private static SharedPreferences sharedPref;
     private mainDatabase mDatabase;
+    private SqliteDatabase epmsDatabase;
     private redundantDatabase mRedDatabase;
     private SharedPreferences.Editor mEditor;
 
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = sharedPref.edit();
         mDatabase = new mainDatabase(getApplicationContext());
+        epmsDatabase = new SqliteDatabase(getApplicationContext());
         mRedDatabase = new redundantDatabase(getApplicationContext());
         context = getApplicationContext();
 
@@ -277,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 if(newTransaction.getTranstype() == 1) {
                     mDatabase.saveEftTransaction(newTransaction);
                     mDatabase.saveTransactionOrigin(newTransaction.getRefno(), "WiPay EfuPay");
+                    epmsDatabase.saveEftTransaction(newTransaction);
                 }
 
                 String headerLogoPath = sharedPref.getString("headerlogo", null);

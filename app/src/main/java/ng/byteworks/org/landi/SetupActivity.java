@@ -1,9 +1,12 @@
 package ng.byteworks.org.landi;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -30,10 +33,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.arke.sdk.util.epms.Transaction;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -41,16 +40,16 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import ng.byteworks.org.landi.utils.mainDatabase;
-import ng.byteworks.org.landi.utils.redundantDatabase;
-import ng.byteworks.org.landi.BuildConfig;
+
 
 public class SetupActivity extends AppCompatActivity {
 
-    private SharedPreferences sharedPref;
-    private mainDatabase mDatabase;
-    private SharedPreferences.Editor mEditor;
+    private static SharedPreferences sharedPref;
+    private static mainDatabase mDatabase;
+    private static SharedPreferences.Editor mEditor;
 
     private String userPermission;
+    private static Context context;
 
 
     @Override
@@ -77,7 +76,8 @@ public class SetupActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final String permission = intent.getStringExtra("permission");
         userPermission = permission;
-
+//disable some functions based on permission level
+        showSettingsButtons(userPermission);
 //        change receipt logo
         Button chgLogo = (Button) findViewById(R.id.changeRecLogo);
         chgLogo.setOnClickListener(new View.OnClickListener() {
@@ -125,9 +125,18 @@ public class SetupActivity extends AppCompatActivity {
         EOD.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                endOfDayInitiate();
+                endOfDayConfirm(view);
             }
         });
+//        print eod receipt
+//        Button EODPrint = (Button) findViewById(R.id.eodPrintBtn);
+//        EODPrint.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                printEodReceiptNow(view);
+//            }
+//        });
+
 
         //        open TID config setting dialog
         Button tidBtn = (Button) findViewById(R.id.terminalIdBtn);
@@ -156,6 +165,62 @@ public class SetupActivity extends AppCompatActivity {
                 openKeyCompConfDialog(view, permission);
             }
         });
+    }
+
+    private void showSettingsButtons(String userPermission) {
+        Button opPinBtn = (Button)findViewById(R.id.chgOpPinBtn);
+        Button supPinBtn = (Button)findViewById(R.id.chgSupPinBtn);
+        Button adPinBtn = (Button)findViewById(R.id.chgAdPinBtn);
+        Button cloudLink = (Button)findViewById(R.id.cloudLink);
+        Button chngBizMailBtn = (Button)findViewById(R.id.chngBizMailBtn);
+        View epmsConfig = (View)findViewById(R.id.epmsConfigInc);
+        switch (userPermission){
+            case "operator":
+                adPinBtn.setVisibility(View.GONE);
+                supPinBtn.setVisibility(View.GONE);
+                epmsConfig.setVisibility(View.GONE);
+                cloudLink.setVisibility(View.GONE);
+                chngBizMailBtn.setVisibility(View.GONE);
+                break;
+            case "supervisor":
+                adPinBtn.setVisibility(View.GONE);
+                epmsConfig.setVisibility(View.GONE);
+                cloudLink.setVisibility(View.GONE);
+                break;
+            default:
+//              admin
+                break;
+        }
+        Toast.makeText(SetupActivity.this, "Access granted, Permission Level: "+userPermission.toUpperCase(), Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void endOfDayConfirm(View view) {
+            LayoutInflater layoutInflater = LayoutInflater.from(SetupActivity.this);
+            View promptView = layoutInflater.inflate(R.layout.confirmation_dialog_layout, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SetupActivity.this);
+            alertDialogBuilder.setView(promptView);
+
+            final TextView message = (TextView) promptView.findViewById(R.id.confirmation_textView);
+            message.setText("This operation will wipe all transaction history from the device." +
+                    "\nDo you wish to proceed anyway?");
+            // setup a dialog window
+            alertDialogBuilder.setCancelable(false)
+                    .setPositiveButton("Proceed Anyway", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            endOfDayInitiate();
+                       }
+                    })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+            // create an alert dialog
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
     }
 
     private void endOfDayInitiate() {
@@ -236,9 +301,9 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void syncTerminal() {
-        if (!userPermission.equals("admin")) {
-            Toast.makeText(getApplicationContext(), "You do not have access to this feature", Toast.LENGTH_LONG).show();
-        } else {
+//        if (!userPermission.equals("admin")) {
+//            Toast.makeText(getApplicationContext(), "You do not have access to this feature", Toast.LENGTH_LONG).show();
+//        } else {
             String tid = sharedPref.getString("terminalid", "");
             String mid = sharedPref.getString("merchantid", "");
             String ptsp = sharedPref.getString("ptspId", "");
@@ -251,7 +316,7 @@ public class SetupActivity extends AppCompatActivity {
             String urlPath = _uri + "/syncTerminal?business_name="+bizName+"&business_email="+bizEmail+"&terminal_id=" + tid + "&merchant_id=" + mid + "&ptsp_id=" + ptsp + "&bank_id=" + bank + "&device_model=" + deviceModel + "&appVersion=" + versionName;
             getServerResponse(urlPath);
             Toast.makeText(SetupActivity.this, "Terminal sync initiated", Toast.LENGTH_SHORT).show();
-        }
+//        }
     }
 
     private void getServerResponse(String url) {
@@ -466,17 +531,13 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     //print eod receipt
-    public void printEodReceipt(View view){
-//        if(mDatabase.listTransactions().size() > 0) {
-//            try {
-//                com.arke.sdk.view.EPMSAdminActivity.printEODReceipt(SetupActivity.this);
-////                mDatabase.deleteEftTransaction();
-//            } catch (Exception e) {
-//                Log.e("SetupActivity", e.getLocalizedMessage());
-//            }
-//        }else{
-//            Snackbar.make(view, "No transaction has been carried out since previous End of Day", Snackbar.LENGTH_LONG).show();
-//        }
+    public void printEodReceiptNow(View view){
+        String headerLogoPath = sharedPref.getString("headerlogo", null);
+        try {
+            com.arke.sdk.view.EPMSAdminActivity.printEODReceipt(SetupActivity.this, headerLogoPath);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -493,25 +554,32 @@ public class SetupActivity extends AppCompatActivity {
         final EditText newPin2 = (EditText) promptView.findViewById(R.id.confirmNewPinTextField);
 
         final String savedPin = this.sharedPref.getString("opPin", "1234");
+        final String supPin = this.sharedPref.getString("supPin", "0000");
+        final String adminPin = this.sharedPref.getString("adminPin", "260089");
         // setup a dialog window
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("Change Operator PIN", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+//                        check if new pin has not been used by other users
+                        if(!newPin.getText().toString().equals(supPin) && !newPin.getText().toString().equals(adminPin)){
 //                        check if old pin match what is saved
-                        if(savedPin.toString().equals(oldPin.getText().toString())){
+                            if(savedPin.toString().equals(oldPin.getText().toString()) || supPin.toString().equals(oldPin.getText().toString()) || adminPin.toString().equals(oldPin.getText().toString()) ){
 //                            check if both new pins are exact
-                            if(newPin.getText().toString().equals(newPin2.getText().toString())){
+                                if(newPin.getText().toString().equals(newPin2.getText().toString())){
 //                                save the new pin
-                                mEditor.putString("opPin", newPin.getText().toString());
-                                mEditor.commit();
-                                Toast.makeText(getApplicationContext(), "Operator PIN has been changed successfully", Toast.LENGTH_LONG).show();
-                            }else{
+                                    mEditor.putString("opPin", newPin.getText().toString());
+                                    mEditor.commit();
+                                    Toast.makeText(getApplicationContext(), "Operator PIN has been changed successfully", Toast.LENGTH_LONG).show();
+                                }else{
 //                                alert the user pins do not match
-                                Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
+                                }
+                            }else{
+//                            alert the user invalid pin
+                                Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
                             }
                         }else{
-//                            alert the user invalid pin
-                            Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, "Please specify a different PIN", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -541,25 +609,31 @@ public class SetupActivity extends AppCompatActivity {
         final EditText newPin2 = (EditText) promptView.findViewById(R.id.confirmNewPinTextField);
 
         final String savedPin = this.sharedPref.getString("supPin", "0000");
+        final String adminPin = this.sharedPref.getString("adminPin", "260089");
+        final String opPin = this.sharedPref.getString("opPin", "1234");
         // setup a dialog window
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("Change Supervisor PIN", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        if(!newPin.getText().toString().equals(opPin) && !newPin.getText().toString().equals(adminPin)){
 //                        check if old pin match what is saved
-                        if(savedPin.toString().equals(oldPin.getText().toString())){
+                            if(savedPin.equals(oldPin.getText().toString()) || adminPin.equals(oldPin.getText().toString())){
 //                            check if both new pins are exact
-                            if(newPin.getText().toString().equals(newPin2.getText().toString())){
+                                if(newPin.getText().toString().equals(newPin2.getText().toString())){
 //                                save the new pin
-                                mEditor.putString("supPin", newPin.getText().toString());
-                                mEditor.commit();
-                                Toast.makeText(getApplicationContext(), "Supervisor PIN has been changed successfully", Toast.LENGTH_LONG).show();
-                            }else{
+                                    mEditor.putString("supPin", newPin.getText().toString());
+                                    mEditor.commit();
+                                    Toast.makeText(getApplicationContext(), "Supervisor PIN has been changed successfully", Toast.LENGTH_LONG).show();
+                                }else{
 //                                alert the user pins do not match
-                                Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
+                                }
+                            }else{
+//                            alert the user invalid pin
+                                Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
                             }
                         }else{
-//                            alert the user invalid pin
-                            Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
+                            Toast.makeText(SetupActivity.this, "Please specify a different PIN", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -593,25 +667,31 @@ public class SetupActivity extends AppCompatActivity {
             final EditText newPin2 = (EditText) promptView.findViewById(R.id.confirmNewPinTextField);
 
             final String savedPin = this.sharedPref.getString("adminPin", "260089");
+            final String supPin = this.sharedPref.getString("supPin", "260089");
+            final String opPin = this.sharedPref.getString("opPin", "260089");
             // setup a dialog window
             alertDialogBuilder.setCancelable(false)
                     .setPositiveButton("Change Admin PIN", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
+                            if(!newPin.getText().toString().equals(supPin) && !newPin.getText().toString().equals(opPin)){
 //                        check if old pin match what is saved
-                            if (savedPin.toString().equals(oldPin.getText().toString())) {
+                                if (savedPin.toString().equals(oldPin.getText().toString())) {
 //                            check if both new pins are exact
-                                if (newPin.getText().toString().equals(newPin2.getText().toString())) {
+                                    if (newPin.getText().toString().equals(newPin2.getText().toString())) {
 //                                save the new pin
-                                    mEditor.putString("adminPin", newPin.getText().toString());
-                                    mEditor.commit();
-                                    Toast.makeText(getApplicationContext(), "Admin PIN has been changed successfully", Toast.LENGTH_LONG).show();
-                                } else {
+                                        mEditor.putString("adminPin", newPin.getText().toString());
+                                        mEditor.commit();
+                                        Toast.makeText(getApplicationContext(), "Admin PIN has been changed successfully", Toast.LENGTH_LONG).show();
+                                    } else {
 //                                alert the user pins do not match
-                                    Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
-                                }
-                            } else {
+                                        Snackbar.make(view, "Sorry, New PINs do not match. Kindly try again.", Snackbar.LENGTH_LONG).show();
+                                    }
+                                } else {
 //                            alert the user invalid pin
-                                Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
+                                }
+                            }else{
+                                Toast.makeText(SetupActivity.this, "Please specify a different PIN", Toast.LENGTH_SHORT).show();
                             }
                         }
                     })
@@ -691,6 +771,7 @@ public class SetupActivity extends AppCompatActivity {
                         mEditor.putString("businessName", bizName.getText().toString());
                         mEditor.commit();
                         Toast.makeText(getApplicationContext(), "Your Business' name has been set successfully", Toast.LENGTH_LONG).show();
+                        syncTerminal();
                     }
                 })
                 .setNegativeButton("Cancel",
@@ -727,6 +808,7 @@ public class SetupActivity extends AppCompatActivity {
                             mEditor.putString("businessEmail", email.getText().toString());
                             mEditor.commit();
                             Toast.makeText(getApplicationContext(), "Your Business' e-mail has been set successfully", Toast.LENGTH_LONG).show();
+                            syncTerminal();
                         }
                     })
                     .setNegativeButton("Cancel",
