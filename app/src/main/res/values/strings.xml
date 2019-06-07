@@ -133,6 +133,8 @@
     <string name="terminal_id">Terminal Identification</string>
     <string name="host_config">Host Configuration</string>
     <string name="key_config">Key Configuration</string>
+
+
     <string name="perp_term">Prep Terminal</string>
     <string name="dnlParams">Download Parameters</string>
     <string name="dnlKeys">Download New Keys</string>
@@ -161,4 +163,8 @@
     <string name="laod_from_local">Load Image From Internal Storage</string>
     <string name="load_from_url">Load Image from URL</string>
     <string name="fetch_with_bank_code">Fetch Image From Efull Terminal Manager</string>
+    <string name="print_transact_hist">Print Transaction History</string>
+    <string name="close_batch">Close Batch</string>
+    <string name="clear_DB">Clear Database</string>
+    <string name="rep_rec">Re-print Receipt</string>
 </resources>

@@ -173,7 +173,7 @@
                 android:textColor="@color/cardview_dark_background" />
 
             <Button
-                android:id="@+id/eodPrintBtn"
+                android:id="@+id/printEODRec"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
@@ -185,6 +185,71 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/print_EOD"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/reprintReceiptBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_description_purple_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:onClick="printEodReceiptNow"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/rep_rec"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/prinTransHistBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_history_purple_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/print_transact_hist"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/closeBatchBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_remove_circle_blue_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/close_batch"
+                android:textAlignment="viewStart"
+                android:textAllCaps="false"
+                android:textColor="@color/cardview_dark_background" />
+
+            <Button
+                android:id="@+id/clearDBBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_delete_forever_red_32dp"
+                android:drawablePadding="10dp"
+                android:focusable="true"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/clear_DB"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 android:textColor="@color/cardview_dark_background" />

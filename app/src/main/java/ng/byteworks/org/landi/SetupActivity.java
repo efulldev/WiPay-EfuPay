@@ -165,6 +165,54 @@ public class SetupActivity extends AppCompatActivity {
                 openKeyCompConfDialog(view, permission);
             }
         });
+
+        //print transaction history
+        Button prinTransHistBtn = (Button) findViewById(R.id.prinTransHistBtn);
+        prinTransHistBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String headerLogoPath = sharedPref.getString("headerlogo", null);
+                try {
+                    com.arke.sdk.view.EPMSAdminActivity.printTransactionHistoryReceipt(SetupActivity.this, headerLogoPath);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //close batch
+        Button closeBatchBtn = (Button) findViewById(R.id.closeBatchBtn);
+        closeBatchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Integer batchNo = sharedPref.getInt(getString(R.string.batch_no), 1);
+                Integer newBatchNo = batchNo + 1;
+                mEditor.putInt(getString(R.string.batch_no), newBatchNo);
+                mEditor.apply();
+                com.arke.sdk.view.EPMSAdminActivity.closeBatch(SetupActivity.this);
+            }
+        });
+
+        //reprint receipt
+        Button reprintReceiptBtn = (Button) findViewById(R.id.reprintReceiptBtn);
+        reprintReceiptBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String headerLogoPath = sharedPref.getString("headerlogo", null);
+                com.arke.sdk.view.EPMSAdminActivity.reprintReceipt(SetupActivity.this, SetupActivity.this, headerLogoPath);
+            }
+        });
+
+        //clear database
+        Button clearDBBtn = (Button) findViewById(R.id.clearDBBtn);
+        clearDBBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDatabase.deleteEftTransaction();
+                com.arke.sdk.view.EPMSAdminActivity.clearDatabase(SetupActivity.this);
+            }
+        });
     }
 
     private void showSettingsButtons(String userPermission) {
@@ -173,6 +221,9 @@ public class SetupActivity extends AppCompatActivity {
         Button adPinBtn = (Button)findViewById(R.id.chgAdPinBtn);
         Button cloudLink = (Button)findViewById(R.id.cloudLink);
         Button chngBizMailBtn = (Button)findViewById(R.id.chngBizMailBtn);
+        Button closeBatchBtn = (Button)findViewById(R.id.closeBatchBtn);
+        Button clearDBBtn = (Button)findViewById(R.id.clearDBBtn);
+        Button prinTransHistBtn = (Button)findViewById(R.id.prinTransHistBtn);
         View epmsConfig = (View)findViewById(R.id.epmsConfigInc);
         switch (userPermission){
             case "operator":
@@ -181,6 +232,8 @@ public class SetupActivity extends AppCompatActivity {
                 epmsConfig.setVisibility(View.GONE);
                 cloudLink.setVisibility(View.GONE);
                 chngBizMailBtn.setVisibility(View.GONE);
+                closeBatchBtn.setVisibility(View.GONE);
+                clearDBBtn.setVisibility(View.GONE);
                 break;
             case "supervisor":
                 adPinBtn.setVisibility(View.GONE);
@@ -240,7 +293,7 @@ public class SetupActivity extends AppCompatActivity {
                 serverSendSummary(batchNo);
                 Toast.makeText(SetupActivity.this, "End of day initiated : Batch No.:" + newBatchNo, Toast.LENGTH_LONG).show();
 //                    delete eft table
-                mDatabase.deleteEftTransaction();
+//                mDatabase.deleteEftTransaction();
             } else {
                 Toast.makeText(SetupActivity.this, "No transaction has been carried out since previous End of Day", Toast.LENGTH_LONG).show();
             }
