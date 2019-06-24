@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -33,7 +35,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.arke.sdk.util.epms.Constant;
 import com.arke.sdk.util.epms.Transaction;
+import com.arke.sdk.view.EPMSAdminActivity;
 import com.google.gson.Gson;
 
 import org.json.JSONException;
@@ -110,18 +114,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//get account balance
-        Button balance = (Button) findViewById(R.id.balance);
-        balance.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
-                getBatchSeqNos();
-                Intent intent = new Intent(MainActivity.this, com.arke.sdk.view.EPMSActivity.class);
-                intent.putExtra("trantype", "" + 7);
-                intent.putExtra("batchno", "" + batchNo);
-                intent.putExtra("seqno", "" + seqNo);
-                startActivityForResult(intent, 0);
-            }
-        });
 
 //        open preferences page
         Button setup = (Button) findViewById(R.id.setup);
@@ -243,6 +235,63 @@ public class MainActivity extends AppCompatActivity {
         this.seqNo = seqNo;
     }
 
+    //print eod receipt
+    public void printEodReceiptNow(View view){
+        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.admin_pin_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        final EditText uPin = (EditText) promptView.findViewById(R.id.adminPinTextField);
+        final String savedPin = this.sharedPref.getString("opPin", "1234");
+        final String savedSupPin = this.sharedPref.getString("supPin", "0000");
+        final String savedAdminPin = this.sharedPref.getString("adminPin", "260089");
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String pin = uPin.getText().toString();
+                        String permission = "";
+                        if(savedPin.equals(pin) || savedSupPin.equals(pin) || savedAdminPin.equals(pin)){
+                            Boolean permissionGranted = false;
+                            if(savedAdminPin.equals(pin)){
+                                permission = "admin";
+                                permissionGranted = true;
+                            }else if(savedSupPin.equals(pin)){
+                                permission = "supervisor";
+                                permissionGranted = true;
+                            }else{
+                                permission = "operator";
+                                permissionGranted = false;
+                            }
+//                           print end of day receipt if permission is granted
+                            if(permissionGranted){
+                                String headerLogoPath = sharedPref.getString("headerlogo", null);
+                                try {
+                                    com.arke.sdk.view.EPMSAdminActivity.printEODReceipt(MainActivity.this, headerLogoPath);
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                            }
+                        }else{
+//                            alert invalid PIN
+                            Snackbar.make(view, "Invalid PIN! Please try again", Snackbar.LENGTH_LONG).show();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -273,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
                 // get String data from Intent
-                com.arke.sdk.util.epms.Transaction newTransaction = (com.arke.sdk.util.epms.Transaction) data
+                Transaction newTransaction = (Transaction) data
                         .getSerializableExtra("response");
                 //save transaction locally
                 if(newTransaction.getTranstype() == 1) {
@@ -285,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
                 String headerLogoPath = sharedPref.getString("headerlogo", null);
                 if(headerLogoPath != null){
                     try {
-                        com.arke.sdk.view.EPMSAdminActivity.printReceipt(newTransaction, MainActivity.this, headerLogoPath);
+                        EPMSAdminActivity.printReceipt(newTransaction, MainActivity.this, headerLogoPath);
                     } catch (Exception e) {
                         Log.e("MainActivity", e.getLocalizedMessage());
                     }
@@ -293,8 +342,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Please configure receipt logo", Toast.LENGTH_SHORT).show();
                 }
 
-                if (newTransaction.getMode() == com.arke.sdk.util.epms.Constant.CHIP) {
-                    com.arke.sdk.view.EPMSAdminActivity.removeCard(newTransaction, MainActivity.this,
+                if (newTransaction.getMode() == Constant.CHIP) {
+                    EPMSAdminActivity.removeCard(newTransaction, MainActivity.this,
                             MainActivity.this);
                 }
 
@@ -305,7 +354,9 @@ public class MainActivity extends AppCompatActivity {
                     Integer seqNo = sharedPref.getInt(getString(R.string.seq_no), 1);
                     Integer newSeqNo = seqNo + 1;
                     mEditor.putInt(getString(R.string.seq_no), newSeqNo);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                     mEditor.apply();
+                }
             }
         }
     }
