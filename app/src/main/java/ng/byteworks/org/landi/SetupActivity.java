@@ -224,6 +224,7 @@ public class SetupActivity extends AppCompatActivity {
         Button closeBatchBtn = (Button)findViewById(R.id.closeBatchBtn);
         Button clearDBBtn = (Button)findViewById(R.id.clearDBBtn);
         Button prinTransHistBtn = (Button)findViewById(R.id.prinTransHistBtn);
+        Button printEODRec = (Button)findViewById(R.id.printEODRec);
         View epmsConfig = (View)findViewById(R.id.epmsConfigInc);
         switch (userPermission){
             case "operator":
@@ -234,6 +235,7 @@ public class SetupActivity extends AppCompatActivity {
                 chngBizMailBtn.setVisibility(View.GONE);
                 closeBatchBtn.setVisibility(View.GONE);
                 clearDBBtn.setVisibility(View.GONE);
+                printEODRec.setVisibility(View.GONE);
                 break;
             case "supervisor":
                 adPinBtn.setVisibility(View.GONE);
