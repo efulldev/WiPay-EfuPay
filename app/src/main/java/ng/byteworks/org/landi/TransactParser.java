@@ -16,20 +16,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arke.sdk.util.epms.SqliteDatabase;
+import com.arke.sdk.util.epms.Transaction;
 
 import java.text.NumberFormat;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
 import ng.byteworks.org.landi.utils.redundantTransaction;
-
+import com.arke.sdk.view.EPMSAdminActivity;
 import static ng.byteworks.org.landi.MainActivity.sendTransaction;
 
 
 public class TransactParser extends AppCompatActivity {
 
     private static final String TAG = "TransactParser";
-
+    private Timer respTimer;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor mEditor;
 
@@ -47,33 +50,13 @@ public class TransactParser extends AppCompatActivity {
 
     public final static String EXTRA_PURCHASE_ACTION = "makePayment";
 
-    public static String formatAmount(double totalAuthAmount) {
-        String Currency = ""+Html.fromHtml("&#8358;");
-        String Separator = ",";
-        Boolean Spacing = false;
-        Boolean Delimiter = false;
-        Boolean Decimals = true;
-        String currencyFormat = "";
-        if (Spacing) {
-            if (Delimiter) {
-                currencyFormat = Currency + ". ";
-            } else {
-                currencyFormat = Currency + " ";
-            }
-        } else if (Delimiter) {
-            currencyFormat = Currency + ".";
-        } else {
-            currencyFormat = Currency;
-        }
-
-        String tformatted = NumberFormat.getCurrencyInstance().format(totalAuthAmount / 100.0D).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
-        return tformatted;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transact_parser);
+        respTimer = new Timer();
+
 //        get parameters from the calling activity
         Intent intent = getIntent();
         if(null != intent) {
@@ -81,6 +64,7 @@ public class TransactParser extends AppCompatActivity {
             sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
             mEditor = sharedPref.edit();
             mDatabase = new mainDatabase(getApplicationContext());
+            epmsDatabase = new SqliteDatabase(getApplicationContext());
             mRedDatabase = new redundantDatabase(getApplicationContext());
 
             this.domainName = intent.getStringExtra("domainName");
@@ -132,17 +116,18 @@ public class TransactParser extends AppCompatActivity {
         if (requestCode == 0) {
             if (resultCode == Activity.RESULT_OK) {
                 // get String data from Intent
-                com.arke.sdk.util.epms.Transaction newTransaction = (com.arke.sdk.util.epms.Transaction) data
-                        .getSerializableExtra("response");
+                Transaction newTransaction = (Transaction) data.getSerializableExtra("response");
                 Log.d("TransactParser", "stan = " + newTransaction.getStan());
-                mDatabase.saveEftTransaction(newTransaction);
-                mDatabase.saveTransactionOrigin(newTransaction.getRefno(),""+this.appName);
-                epmsDatabase.saveEftTransaction(newTransaction);
+                if(newTransaction.getTranstype() == 1) {
+                    mDatabase.saveEftTransaction(newTransaction);
+                    mDatabase.saveTransactionOrigin(newTransaction.getRefno(), ""+this.appName);
+                    epmsDatabase.saveEftTransaction(newTransaction);
+                }
 
                 String headerLogoPath = sharedPref.getString("headerlogo", null);
                 if(headerLogoPath != null){
                     try {
-                        com.arke.sdk.view.EPMSAdminActivity.printReceipt(newTransaction, TransactParser.this, headerLogoPath);
+                        EPMSAdminActivity.printReceipt(newTransaction, TransactParser.this, headerLogoPath);
                     } catch (Exception e) {
                         Log.e("MainActivity", e.getLocalizedMessage());
                     }
@@ -151,32 +136,66 @@ public class TransactParser extends AppCompatActivity {
                 }
 
                 if (newTransaction.getMode() == com.arke.sdk.util.epms.Constant.CHIP) {
-                    com.arke.sdk.view.EPMSAdminActivity.removeCard(newTransaction, TransactParser.this,
+                    EPMSAdminActivity.removeCard(newTransaction, TransactParser.this,
                             TransactParser.this);
                 }
 
 //                 send transaction data to Efull Terminal Manager Server
                 sendTransaction(newTransaction);
-//                format amount
-                Double amt = Double.parseDouble(newTransaction.getAmount());
-//                return result to the calling activity
-                Intent _data = new Intent();
-                _data.putExtra("response", newTransaction.getResponsemessage());
-                _data.putExtra("responseCode", newTransaction.getResponsecode());
-                _data.putExtra("amount", formatAmount(amt));
-                _data.putExtra("refNo", newTransaction.getRefno());
-                _data.putExtra("batchNo", newTransaction.getBatchno());
-                _data.putExtra("seqNo", newTransaction.getSeqno());
-                _data.putExtra("dateTime", newTransaction.getDatetime());
-                setResult(RESULT_OK, _data);
-                finish();
-//                update seqno and batchno
-                Integer seqNo = sharedPref.getInt(getString(R.string.seq_no), 1);
-                Integer newSeqNo = seqNo + 1;
-                mEditor.putInt(getString(R.string.seq_no), newSeqNo);
-                mEditor.apply();
+                // return response to calling app
+                respTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        returnResposeToApp(newTransaction);
+                    }
+                }, 0, 3000);
             }
         }
+
     }
 
+
+    public void returnResposeToApp(Transaction newTransaction){
+        // format amount
+        Double amt = Double.parseDouble(newTransaction.getAmount());
+        // return result to the calling activity
+        Intent _data = new Intent();
+        _data.putExtra("response", newTransaction.getResponsemessage());
+        _data.putExtra("responseCode", newTransaction.getResponsecode());
+        _data.putExtra("amount", formatAmount(amt));
+        _data.putExtra("refNo", newTransaction.getRefno());
+        _data.putExtra("batchNo", newTransaction.getBatchno());
+        _data.putExtra("seqNo", newTransaction.getSeqno());
+        _data.putExtra("dateTime", newTransaction.getDatetime());
+        // update seqno and batchno
+        Integer seqNo = sharedPref.getInt(getString(R.string.seq_no), 1);
+        Integer newSeqNo = seqNo + 1;
+        mEditor.putInt(getString(R.string.seq_no), newSeqNo);
+        mEditor.apply();
+        setResult(RESULT_OK, _data);
+        finish();
+    }
+
+    public static String formatAmount(double totalAuthAmount) {
+        String Currency = ""+Html.fromHtml("&#8358;");
+        String Separator = ",";
+        Boolean Spacing = false;
+        Boolean Delimiter = false;
+        Boolean Decimals = true;
+        String currencyFormat = "";
+        if (Spacing) {
+            if (Delimiter) {
+                currencyFormat = Currency + ". ";
+            } else {
+                currencyFormat = Currency + " ";
+            }
+        } else if (Delimiter) {
+            currencyFormat = Currency + ".";
+        } else {
+            currencyFormat = Currency;
+        }
+
+        String tformatted = NumberFormat.getCurrencyInstance().format(totalAuthAmount / 100.0D).replace(NumberFormat.getCurrencyInstance().getCurrency().getSymbol(), currencyFormat);
+        return tformatted;
+    }
 }

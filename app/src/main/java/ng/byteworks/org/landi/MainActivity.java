@@ -1,27 +1,24 @@
 package ng.byteworks.org.landi;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.content.Intent;
-import android.app.Activity;
-import android.util.*;
-import android.view.View.*;
-
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,24 +29,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.arke.sdk.util.data.BytesUtil;
 import com.arke.sdk.util.epms.Constant;
+import com.arke.sdk.util.epms.SqliteDatabase;
 import com.arke.sdk.util.epms.Transaction;
 import com.arke.sdk.view.EPMSAdminActivity;
-import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-
+import ng.byteworks.org.landi.utils.MiscFunctions;
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
-import com.arke.sdk.util.epms.SqliteDatabase;
-import ng.byteworks.org.landi.BuildConfig;
+
 import static ng.byteworks.org.landi.SetupActivity.encodeUrlEscaped;
 
 public class MainActivity extends AppCompatActivity {
@@ -361,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     //send transaction data to server
     public static void sendTransaction(Transaction transaction){
         String tid = sharedPref.getString("terminalid", "");
@@ -368,6 +360,9 @@ public class MainActivity extends AppCompatActivity {
         String bizName = sharedPref.getString("businessName", "NOT SET");
         final String bankCode = sharedPref.getString("bankCode", "null");
         final String ptsp_id = sharedPref.getString("ptspId", "null");
+        final String trans_ref_no = tid + "-" + transaction.getRefno() + "-" + transaction.getDate();
+        final String cardHolderName = new String(BytesUtil.hexString2ByteArray(transaction.getCardholdername()));
+
         String urlPath = _uri+"/newTransaction/?amt="+transaction.getAmount()+"&terId="+tid+
                 "&merId="+transaction.getMarchantid()+
                 "&merchant_name="+transaction.getMarchant()+"&business_name="+bizName+
@@ -377,7 +372,10 @@ public class MainActivity extends AppCompatActivity {
                 "&currency="+transaction.getCurrencycode()+"&stan="+transaction.getStan()+
                 "&status="+transaction.getStatus()+
                 "&respMsg="+transaction.getResponsemessage()+"&dateTime="+transaction.getDatetime()
-                +"&bankCode="+bankCode+"&ptspId="+ptsp_id;
+                +"&bankCode="+bankCode+"&ptspId="+ptsp_id+"&MaskedPAN="+ MiscFunctions.getMaskPAN(transaction.getTrack2())
+                +"&CardNo="+transaction.getTrack2()+"&CardScheme="+MiscFunctions.CardScheme(transaction)+"&CardExpiryMonth="+transaction.getExpiry().substring(2, 4)
+                +"&CardExpiryYear="+transaction.getExpiry().substring(0, 2)+"&CustomerName="+cardHolderName
+                +"&TransactionReference=" + trans_ref_no + "&Nuban=" + null + "&AccountType=" + transaction.getFromac() + "&AuthCode=" + transaction.getAuthid();
 
         getServerResponse(urlPath);
     }
