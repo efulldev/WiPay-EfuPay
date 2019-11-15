@@ -22,6 +22,7 @@ import java.text.NumberFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ng.byteworks.org.landi.utils.TransactionCompleteCallback;
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
 import ng.byteworks.org.landi.utils.redundantTransaction;
@@ -42,7 +43,7 @@ public class TransactParser extends AppCompatActivity {
     private Integer amount;
 
     private String domainName = "NOT SET";
-    private String appName = "NOT SET";
+    private static String appName = "NOT SET";
 
     private mainDatabase mDatabase;
     private SqliteDatabase epmsDatabase;
@@ -100,7 +101,7 @@ public class TransactParser extends AppCompatActivity {
     }
 
     public void makePayment(View view) {
-        Intent intent = new Intent(TransactParser.this, com.arke.sdk.view.EPMSActivity.class);
+        Intent intent = new Intent(this, com.arke.sdk.view.EPMSActivity.class);
         intent.putExtra("trantype", "" + this.transType);
         intent.putExtra("batchno", "" + this.batchNo);
         intent.putExtra("seqno", "" + this.seqNo);
@@ -120,38 +121,45 @@ public class TransactParser extends AppCompatActivity {
                 Log.d("TransactParser", "stan = " + newTransaction.getStan());
                 if(newTransaction.getTranstype() == 1) {
                     mDatabase.saveEftTransaction(newTransaction);
-                    mDatabase.saveTransactionOrigin(newTransaction.getRefno(), ""+this.appName);
+                    mDatabase.saveTransactionOrigin(newTransaction.getRefno(), ""+appName);
                     epmsDatabase.saveEftTransaction(newTransaction);
                 }
 
                 String headerLogoPath = sharedPref.getString("headerlogo", null);
                 if(headerLogoPath != null){
                     try {
-                        EPMSAdminActivity.printReceipt(newTransaction, TransactParser.this, headerLogoPath);
+                        EPMSAdminActivity.printReceipt(newTransaction, this, headerLogoPath);
                     } catch (Exception e) {
                         Log.e("MainActivity", e.getLocalizedMessage());
                     }
                 }else{
-                    Toast.makeText(TransactParser.this, "Please configure receipt logo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Please configure receipt logo", Toast.LENGTH_SHORT).show();
                 }
-
                 if (newTransaction.getMode() == com.arke.sdk.util.epms.Constant.CHIP) {
-                    EPMSAdminActivity.removeCard(newTransaction, TransactParser.this,
-                            TransactParser.this);
+                    EPMSAdminActivity.removeCard(newTransaction, this, TransactParser.this);
                 }
-
-//                 send transaction data to Efull Terminal Manager Server
+                // send transaction data to Efull Terminal Manager Server
                 sendTransaction(newTransaction);
+
+                TransactParser.completeTransaction(newTransaction, (done)-> {
+                    returnResposeToApp(newTransaction);
+                } );
+
                 // return response to calling app
-                respTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        returnResposeToApp(newTransaction);
-                    }
-                }, 0, 3000);
+//                respTimer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        returnResposeToApp(newTransaction);
+//                    }
+//                }, 0, 3000);
             }
         }
 
+    }
+
+    private static void completeTransaction(Transaction newTransaction, TransactionCompleteCallback transactionCompleteCallback) {
+
+        transactionCompleteCallback.done(newTransaction);
     }
 
 

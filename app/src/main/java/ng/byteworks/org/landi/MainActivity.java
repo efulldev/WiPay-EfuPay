@@ -378,6 +378,7 @@ public class MainActivity extends AppCompatActivity {
                 +"&TransactionReference=" + trans_ref_no + "&Nuban=" + null + "&AccountType=" + transaction.getFromac() + "&AuthCode=" + transaction.getAuthid();
 
         getServerResponse(urlPath);
+
     }
 
     public static void getServerResponse(String url){
