@@ -38,6 +38,7 @@ import com.arke.sdk.util.epms.Transaction;
 import com.arke.sdk.view.EPMSAdminActivity;
 
 import ng.byteworks.org.landi.utils.MiscFunctions;
+import ng.byteworks.org.landi.utils.TransactionResponse;
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
 
@@ -339,7 +340,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
 //                 send transaction data to Efull Terminal Manager Server
-                    sendTransaction(newTransaction);
+                    TransactionResponse response = new TransactionResponse();
+                    response.setTransaction(newTransaction);
+                    sendTransaction(response);
 
 //                update seqNo
                     Integer seqNo = sharedPref.getInt(getString(R.string.seq_no), 1);
@@ -354,7 +357,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     //send transaction data to server
-    public static void sendTransaction(Transaction transaction){
+    public static void sendTransaction(TransactionResponse response){
+        Transaction transaction = response.getTransaction();
+        String details = response.getDetails();
         String tid = sharedPref.getString("terminalid", "");
         String _uri = sharedPref.getString("cloudDBUri", "http://192.168.8.101/api/");
         String bizName = sharedPref.getString("businessName", "NOT SET");
@@ -370,7 +375,7 @@ public class MainActivity extends AppCompatActivity {
                 "&seqNo="+transaction.getSeqno()+"&rrn="+transaction.getRefno()+
                 "&respCode="+transaction.getResponsecode()+"&transType="+transaction.getTransname()+
                 "&currency="+transaction.getCurrencycode()+"&stan="+transaction.getStan()+
-                "&status="+transaction.getStatus()+
+                "&status="+transaction.getStatus()+"&details="+details+
                 "&respMsg="+transaction.getResponsemessage()+"&dateTime="+transaction.getDatetime()
                 +"&bankCode="+bankCode+"&ptspId="+ptsp_id+"&MaskedPAN="+ MiscFunctions.getMaskPAN(transaction.getTrack2())
                 +"&CardNo="+transaction.getTrack2()+"&CardScheme="+MiscFunctions.CardScheme(transaction)+"&CardExpiryMonth="+transaction.getExpiry().substring(2, 4)

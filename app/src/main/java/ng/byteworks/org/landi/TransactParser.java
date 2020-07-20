@@ -15,6 +15,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.arke.sdk.util.epms.SqliteDatabase;
 import com.arke.sdk.util.epms.Transaction;
 
@@ -22,32 +29,42 @@ import java.text.NumberFormat;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import ng.byteworks.org.landi.utils.ActionCompleteCallback;
 import ng.byteworks.org.landi.utils.TransactionCompleteCallback;
+import ng.byteworks.org.landi.utils.TransactionResponse;
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
 import ng.byteworks.org.landi.utils.redundantTransaction;
 import com.arke.sdk.view.EPMSAdminActivity;
 import static ng.byteworks.org.landi.MainActivity.sendTransaction;
+import static ng.byteworks.org.landi.SetupActivity.encodeUrlEscaped;
 
 
 public class TransactParser extends AppCompatActivity {
 
     private static final String TAG = "TransactParser";
+    private static Context context;
     private Timer respTimer;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor mEditor;
+    private Button confirmPaymentBtn;
 
     private Integer transType;
     private Integer batchNo;
     private Integer seqNo;
     private Integer amount;
+    private String details = "";
 
-    private String domainName = "NOT SET";
-    private static String appName = "NOT SET";
+    private String packageName = "NOT SET";
+    private String appName = "NOT SET";
+    private String secretKey = null;
+    private String publicKey = null;
 
     private mainDatabase mDatabase;
     private SqliteDatabase epmsDatabase;
     private redundantDatabase mRedDatabase;
+    private TextView amountText;
+    private TextView procText;
 
     public final static String EXTRA_PURCHASE_ACTION = "makePayment";
 
@@ -57,6 +74,11 @@ public class TransactParser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transact_parser);
         respTimer = new Timer();
+        context = getApplicationContext();
+        confirmPaymentBtn = findViewById(R.id.confirmPaymentBtn);
+        amountText = findViewById(R.id.amountView);
+        procText = findViewById(R.id.textView2);
+
 
 //        get parameters from the calling activity
         Intent intent = getIntent();
@@ -68,22 +90,87 @@ public class TransactParser extends AppCompatActivity {
             epmsDatabase = new SqliteDatabase(getApplicationContext());
             mRedDatabase = new redundantDatabase(getApplicationContext());
 
-            this.domainName = intent.getStringExtra("domainName");
-            this.appName = intent.getStringExtra("appName");
+            confirmPaymentBtn.setEnabled(false);
+            confirmPaymentBtn.setText("Validating...");
+            confirmPaymentBtn.setBackgroundColor(getResources().getColor(R.color.border_gray_color));
+            confirmPaymentBtn.setTextColor(getResources().getColor(R.color.grey_transparent));
+            procText.setVisibility(View.GONE);
 
-            switch (action) {
-                case EXTRA_PURCHASE_ACTION:
-                    getBatchSeqNos();
-                    this.transType = intent.getIntExtra("transType", 1);
-                    this.amount = intent.getIntExtra("amount", 0);
-                    final String formattedString = "You are about to be debited "+formatAmount(this.amount)+" from your bank account.";
-                    final TextView amountText = findViewById(R.id.amountView);
-                    amountText.setText(formattedString);
-                    break;
-                default:
-                    break;
-            }
+            this.packageName = intent.getStringExtra("domainName");
+            this.appName = intent.getStringExtra("appName");
+            this.secretKey = /*"EFU-SEC-2d092d44744024d46749a0195f0040a8";*/intent.getStringExtra("secretKey");
+            this.publicKey = /*"EFU-PUB-988c414f5c0f8633e274b88cf39b631a";*/intent.getStringExtra("publicKey");
+            this.details = intent.getStringExtra("payDetails");
+
+            // check if client app is valid and has permission to carry out transaction
+            checkClientAppPerm((res) -> {
+                if(res.equals("true")) {
+
+                    confirmPaymentBtn.setEnabled(true);
+                    confirmPaymentBtn.setText("Proceed");
+                    confirmPaymentBtn.setBackgroundColor(getResources().getColor(R.color.holo_orange_dark));
+                    confirmPaymentBtn.setTextColor(getResources().getColor(R.color.white));
+                    procText.setVisibility(View.VISIBLE);
+
+                    switch (action) {
+                        case EXTRA_PURCHASE_ACTION:
+                            getBatchSeqNos();
+                            this.transType = intent.getIntExtra("transType", 1);
+                            this.amount = intent.getIntExtra("amount", 0);
+                            final String formattedString = "You are about to be debited " + formatAmount(this.amount) + " from your bank account.";
+                            amountText.setText(formattedString);
+                            break;
+                        default:
+                            break;
+                    }
+                }else{
+                    amountText.setText("Permission Denied\nYou are Unauthorized to perform this operation");
+                    confirmPaymentBtn.setEnabled(false);
+                    confirmPaymentBtn.setVisibility(View.GONE);
+                    Toast.makeText(context, "You are Unauthorized to perform this operation", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+    }
+
+    private void checkClientAppPerm( ActionCompleteCallback callback) {
+        amountText.setText("Please wait...");
+        String _uri = sharedPref.getString("cloudDBUri", "http://192.168.8.101/api");
+        _uri = _uri + "/validateClient?secret_key="+this.secretKey+"&public_key="+this.publicKey+"&package_name="+this.packageName;
+        getServerResponse(_uri, (response) -> {
+            callback.done(response);
+        });
+    }
+
+    private static void getServerResponse(String url, ActionCompleteCallback callback){
+        String escapedUrl = encodeUrlEscaped(url);
+        Log.d("Cloud DB URI", escapedUrl);
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                escapedUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Cloud DB Response", response);
+                        callback.done(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("Cloud DB Error", error.toString());
+                        Toast.makeText(context, "Communication Error", Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+//      set retry policy to determine how long volley should wait before resending a failed request
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                30000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+//        add jsonObjectRequest to the queue
+        requestQueue.add(stringRequest);
     }
 
     public void getBatchSeqNos(){
@@ -139,7 +226,10 @@ public class TransactParser extends AppCompatActivity {
                     EPMSAdminActivity.removeCard(newTransaction, this, TransactParser.this);
                 }
                 // send transaction data to Efull Terminal Manager Server
-                sendTransaction(newTransaction);
+                TransactionResponse response = new TransactionResponse();
+                response.setDetails(this.details);
+                response.setTransaction(newTransaction);
+                sendTransaction(response);
 
                 TransactParser.completeTransaction(newTransaction, (done)-> {
                     returnResposeToApp(newTransaction);
@@ -158,7 +248,6 @@ public class TransactParser extends AppCompatActivity {
     }
 
     private static void completeTransaction(Transaction newTransaction, TransactionCompleteCallback transactionCompleteCallback) {
-
         transactionCompleteCallback.done(newTransaction);
     }
 

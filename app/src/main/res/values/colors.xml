@@ -9,4 +9,6 @@
     <color name="timestamp">#858585</color>
     <color name="note_list_text">#232323</color>
     <color name="grey_transparent">#A9000000</color>
+    <color name="holo_orange_dark">#ffff8800</color>
+
 </resources>
