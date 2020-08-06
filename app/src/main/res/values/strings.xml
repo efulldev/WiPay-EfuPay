@@ -167,4 +167,6 @@
     <string name="close_batch">Close Batch</string>
     <string name="clear_DB">Clear Database</string>
     <string name="rep_rec">Re-print Receipt</string>
+    <string name="act_info_text">Oops... Seems you\'ve been locked out.\nKindly contact your device administrator for an activation key</string>
+    <string name="activation_code">Activation Code</string>
 </resources>
