@@ -7,8 +7,8 @@ android {
         applicationId "ng.byteworks.org.landi"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 2
-        versionName "0.1.2"
+        versionCode 1
+        versionName "0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }

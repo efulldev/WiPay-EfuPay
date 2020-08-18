@@ -30,13 +30,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import ng.byteworks.org.landi.utils.ActionCompleteCallback;
+import ng.byteworks.org.landi.utils.Controller;
 import ng.byteworks.org.landi.utils.TransactionCompleteCallback;
 import ng.byteworks.org.landi.utils.TransactionResponse;
 import ng.byteworks.org.landi.utils.mainDatabase;
 import ng.byteworks.org.landi.utils.redundantDatabase;
 import ng.byteworks.org.landi.utils.redundantTransaction;
 import com.arke.sdk.view.EPMSAdminActivity;
-import static ng.byteworks.org.landi.MainActivity.sendTransaction;
 import static ng.byteworks.org.landi.SetupActivity.encodeUrlEscaped;
 
 
@@ -101,6 +101,7 @@ public class TransactParser extends AppCompatActivity {
             this.secretKey = /*"EFU-SEC-2d092d44744024d46749a0195f0040a8";*/intent.getStringExtra("secretKey");
             this.publicKey = /*"EFU-PUB-988c414f5c0f8633e274b88cf39b631a";*/intent.getStringExtra("publicKey");
             this.details = intent.getStringExtra("payDetails");
+            Log.d("KEYS=>", this.secretKey+" "+this.publicKey);
 
             // check if client app is valid and has permission to carry out transaction
             checkClientAppPerm((res) -> {
@@ -229,19 +230,13 @@ public class TransactParser extends AppCompatActivity {
                 TransactionResponse response = new TransactionResponse();
                 response.setDetails(this.details);
                 response.setTransaction(newTransaction);
-                sendTransaction(response);
-
-                TransactParser.completeTransaction(newTransaction, (done)-> {
-                    returnResposeToApp(newTransaction);
-                } );
-
-                // return response to calling app
-//                respTimer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        returnResposeToApp(newTransaction);
-//                    }
-//                }, 0, 3000);
+                Controller controller = new Controller(this);
+                controller.sendTransaction(response, (res)-> {
+                    Log.d("SEND TRANS", res);
+                    TransactParser.completeTransaction(newTransaction, (done)-> {
+                        returnResposeToApp(newTransaction);
+                    } );
+                });
             }
         }
 

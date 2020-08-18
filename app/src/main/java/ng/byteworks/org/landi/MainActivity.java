@@ -37,6 +37,8 @@ import com.arke.sdk.util.epms.SqliteDatabase;
 import com.arke.sdk.util.epms.Transaction;
 import com.arke.sdk.view.EPMSAdminActivity;
 
+import ng.byteworks.org.landi.utils.ActionCompleteCallback;
+import ng.byteworks.org.landi.utils.Controller;
 import ng.byteworks.org.landi.utils.MiscFunctions;
 import ng.byteworks.org.landi.utils.TransactionResponse;
 import ng.byteworks.org.landi.utils.mainDatabase;
@@ -342,7 +344,10 @@ public class MainActivity extends AppCompatActivity {
 //                 send transaction data to Efull Terminal Manager Server
                     TransactionResponse response = new TransactionResponse();
                     response.setTransaction(newTransaction);
-                    sendTransaction(response);
+                    Controller controller = new Controller(context);
+                    controller.sendTransaction(response, (res)-> {
+                        Log.d("SEND TRANS", res);
+                    });
 
 //                update seqNo
                     Integer seqNo = sharedPref.getInt(getString(R.string.seq_no), 1);
@@ -357,63 +362,69 @@ public class MainActivity extends AppCompatActivity {
 
 
     //send transaction data to server
-    public static void sendTransaction(TransactionResponse response){
-        Transaction transaction = response.getTransaction();
-        String details = response.getDetails();
-        String tid = sharedPref.getString("terminalid", "");
-        String _uri = sharedPref.getString("cloudDBUri", "http://192.168.8.101/api/");
-        String bizName = sharedPref.getString("businessName", "NOT SET");
-        final String bankCode = sharedPref.getString("bankCode", "null");
-        final String ptsp_id = sharedPref.getString("ptspId", "null");
-        final String trans_ref_no = tid + "-" + transaction.getRefno() + "-" + transaction.getDate();
-        final String cardHolderName = new String(BytesUtil.hexString2ByteArray(transaction.getCardholdername()));
-
-        String urlPath = _uri+"/newTransaction/?amt="+transaction.getAmount()+"&terId="+tid+
-                "&merId="+transaction.getMarchantid()+
-                "&merchant_name="+transaction.getMarchant()+"&business_name="+bizName+
-                "&batchNo="+transaction.getBatchno()+
-                "&seqNo="+transaction.getSeqno()+"&rrn="+transaction.getRefno()+
-                "&respCode="+transaction.getResponsecode()+"&transType="+transaction.getTransname()+
-                "&currency="+transaction.getCurrencycode()+"&stan="+transaction.getStan()+
-                "&status="+transaction.getStatus()+"&details="+details+
-                "&respMsg="+transaction.getResponsemessage()+"&dateTime="+transaction.getDatetime()
-                +"&bankCode="+bankCode+"&ptspId="+ptsp_id+"&MaskedPAN="+ MiscFunctions.getMaskPAN(transaction.getTrack2())
-                +"&CardNo="+transaction.getTrack2()+"&CardScheme="+MiscFunctions.CardScheme(transaction)+"&CardExpiryMonth="+transaction.getExpiry().substring(2, 4)
-                +"&CardExpiryYear="+transaction.getExpiry().substring(0, 2)+"&CustomerName="+cardHolderName
-                +"&TransactionReference=" + trans_ref_no + "&Nuban=" + null + "&AccountType=" + transaction.getFromac() + "&AuthCode=" + transaction.getAuthid();
-
-        getServerResponse(urlPath);
-
-    }
-
-    public static void getServerResponse(String url){
-        String escapedUrl = encodeUrlEscaped(url);
-        Log.d("Cloud DB URI", escapedUrl);
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        StringRequest stringRequest = new StringRequest(
-                Request.Method.GET,
-                escapedUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Cloud DB Response", response);
-                        Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show();
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Cloud DB Error", error.toString());
-                        Toast.makeText(context, "Communication Error", Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
-//      set retry policy to determine how long volley should wait before resending a failed request
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                30000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//        add jsonObjectRequest to the queue
-        requestQueue.add(stringRequest);
-    }
+//    public static void sendTransaction(TransactionResponse response, ActionCompleteCallback callback){
+//        Transaction transaction = response.getTransaction();
+//        String details = response.getDetails();
+//        String tid = sharedPref.getString("terminalid", "");
+//        String _uri = sharedPref.getString("cloudDBUri", "http://192.168.8.101/api/");
+//        String bizName = sharedPref.getString("businessName", "NOT SET");
+//        final String bankCode = sharedPref.getString("bankCode", "null");
+//        final String ptsp_id = sharedPref.getString("ptspId", "null");
+//        final String trans_ref_no = tid + "-" + transaction.getRefno() + "-" + transaction.getDate();
+//        final String cardHolderName = new String(BytesUtil.hexString2ByteArray(transaction.getCardholdername()));
+//
+//        String urlPath = _uri+"/newTransaction/?amt="+transaction.getAmount()+"&terId="+tid+
+//                "&merId="+transaction.getMarchantid()+
+//                "&merchant_name="+transaction.getMarchant()+"&business_name="+bizName+
+//                "&batchNo="+transaction.getBatchno()+
+//                "&seqNo="+transaction.getSeqno()+"&rrn="+transaction.getRefno()+
+//                "&respCode="+transaction.getResponsecode()+"&transType="+transaction.getTransname()+
+//                "&currency="+transaction.getCurrencycode()+"&stan="+transaction.getStan()+
+//                "&status="+transaction.getStatus()+"&details="+details+
+//                "&respMsg="+transaction.getResponsemessage()+"&dateTime="+transaction.getDatetime()
+//                +"&bankCode="+bankCode+"&ptspId="+ptsp_id+"&MaskedPAN="+ MiscFunctions.getMaskPAN(transaction.getTrack2())
+//                +"&CardNo="+transaction.getTrack2()+"&CardScheme="+MiscFunctions.CardScheme(transaction)+"&CardExpiryMonth="+transaction.getExpiry().substring(2, 4)
+//                +"&CardExpiryYear="+transaction.getExpiry().substring(0, 2)+"&CustomerName="+cardHolderName
+//                +"&TransactionReference=" + trans_ref_no + "&Nuban=" + null + "&AccountType=" + transaction.getFromac() + "&AuthCode=" + transaction.getAuthid();
+//
+//        getServerResponse(urlPath, callback);
+//
+//    }
+//
+//    public static void getServerResponse(String url, ActionCompleteCallback callback){
+//        String escapedUrl = encodeUrlEscaped(url);
+//        Log.d("Cloud DB URI", escapedUrl);
+//        RequestQueue requestQueue = Volley.newRequestQueue(context);
+//        StringRequest stringRequest = new StringRequest(
+//                Request.Method.GET,
+//                escapedUrl,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        Log.d("Cloud DB Response", response);
+//                        Toast.makeText(context, "Completed", Toast.LENGTH_SHORT).show();
+//                        if(callback != null){
+//                            callback.done("success");
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e("Cloud DB Error", error.toString());
+//                        Toast.makeText(context, "Communication Error", Toast.LENGTH_LONG).show();
+//                        if(callback != null){
+//                            callback.done("failed");
+//                        }
+//                    }
+//                }
+//        );
+////      set retry policy to determine how long volley should wait before resending a failed request
+//        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+//                30000,
+//                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+////        add jsonObjectRequest to the queue
+//        requestQueue.add(stringRequest);
+//    }
 }
